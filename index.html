@@ -1,0 +1,272 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Interactive CSS Demo</title>
+<style>
+  :root{
+    --bg:#0f172a;        /* slate-900 */
+    --card:#111827;      /* gray-900 */
+    --muted:#94a3b8;     /* slate-400 */
+    --text:#e5e7eb;      /* gray-200 */
+    --brand:#22c55e;     /* green-500 */
+    --brand-2:#3b82f6;   /* blue-500 */
+    --accent:#f59e0b;    /* amber-500 */
+    --ring: 0 0 0 .2rem rgba(59,130,246,.35);
+    --radius: 18px;
+    --shadow: 0 10px 30px rgba(0,0,0,.35);
+    --trans: 180ms ease;
+  }
+
+  * { box-sizing: border-box; }
+  html,body { height: 100%; }
+  body{
+    margin:0;
+    font-family: system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial;
+    color: var(--text);
+    background: radial-gradient(1200px 600px at 10% -20%, rgba(59,130,246,.15), transparent 60%),
+               radial-gradient(1000px 500px at 110% 10%, rgba(34,197,94,.12), transparent 60%),
+               var(--bg);
+    line-height:1.5;
+  }
+
+  .wrap{
+    max-width: 1100px;
+    margin: 40px auto;
+    padding: 0 16px 60px;
+  }
+
+  h1{ font-size: clamp(28px, 4vw, 44px); margin:.5em 0 0.25em; }
+  h2{ font-size: clamp(20px, 3vw, 28px); margin: 32px 0 12px; color:#fff; }
+  p.muted{ color: var(--muted); margin-top:0 }
+
+  /* ---------- Buttons ---------- */
+  .btn{
+    --bgc: var(--brand-2);
+    display:inline-block;
+    padding: 12px 18px;
+    border-radius: 999px;
+    background: linear-gradient(180deg, color-mix(in oklab, var(--bgc), #fff 12%), var(--bgc));
+    color:white;
+    font-weight:600;
+    text-decoration:none;
+    position:relative;
+    outline: none;
+    border:none;
+    cursor:pointer;
+    transition: transform var(--trans), box-shadow var(--trans), filter var(--trans);
+    box-shadow: 0 6px 18px rgba(59,130,246,.35);
+  }
+  .btn:hover{ transform: translateY(-2px); filter: brightness(1.05); }
+  .btn:active{ transform: translateY(0); box-shadow: 0 2px 10px rgba(59,130,246,.35); }
+  .btn--ghost{
+    --bgc: transparent;
+    background: transparent;
+    color: var(--text);
+    border: 1px solid rgba(148,163,184,.35);
+    box-shadow: none;
+  }
+  .btn--ghost:hover{ border-color: rgba(148,163,184,.7); }
+
+  /* ---------- Card hover ---------- */
+  .grid{
+    display:grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 18px;
+    margin-top: 18px;
+  }
+  .card{
+    background: linear-gradient(180deg, rgba(255,255,255,.02), transparent 45%),
+                var(--card);
+    border: 1px solid rgba(148,163,184,.15);
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    transition: transform var(--trans), border-color var(--trans), box-shadow var(--trans);
+  }
+  .card:hover{
+    transform: translateY(-6px);
+    border-color: rgba(148,163,184,.35);
+    box-shadow: 0 16px 40px rgba(0,0,0,.5);
+  }
+  .card img{ width:100%; height:160px; object-fit:cover; display:block; filter: saturate(1.1); }
+  .card .content{ padding:14px 16px 18px; }
+  .chip{
+    font-size:12px; padding:4px 8px; border-radius:999px;
+    background: rgba(34,197,94,.15); color:#bbf7d0; border:1px solid rgba(34,197,94,.25);
+  }
+
+  /* ---------- Tooltip (CSS only) ---------- */
+  .tooltip{
+    position: relative; display:inline-flex; align-items:center; gap:8px; cursor:help;
+  }
+  .tooltip[data-tip]::after{
+    content: attr(data-tip);
+    position:absolute; left:50%; transform: translate(-50%, -8px);
+    bottom: 130%; white-space: nowrap;
+    background:#111827; color:#fff; border:1px solid rgba(148,163,184,.25);
+    padding:8px 10px; border-radius:10px; opacity:0; pointer-events:none;
+    transition: opacity var(--trans), transform var(--trans);
+    box-shadow: var(--shadow);
+  }
+  .tooltip:hover::after, .tooltip:focus::after{
+    opacity:1; transform: translate(-50%, 0);
+  }
+
+  /* ---------- Accordion with <details> ---------- */
+  details{
+    background: rgba(255,255,255,.02);
+    border:1px solid rgba(148,163,184,.18);
+    border-radius: 14px;
+    padding: 10px 14px;
+    transition: border-color var(--trans), background var(--trans);
+  }
+  details + details{ margin-top:10px; }
+  summary{
+    list-style:none; cursor:pointer; font-weight:600; outline:none;
+  }
+  summary::-webkit-details-marker{ display:none; }
+  details[open]{ background: rgba(255,255,255,.04); border-color: rgba(148,163,184,.35); }
+  details p{ margin: 10px 0 0; color: var(--muted); }
+
+  /* ---------- Tabs with radio buttons ---------- */
+  .tabs{ margin-top: 12px; }
+  .tabs input{ display:none; }
+  .tab-labels{ display:flex; gap:8px; flex-wrap:wrap; }
+  .tab-label{
+    padding:8px 14px; border-radius:999px; cursor:pointer; user-select:none;
+    border:1px solid rgba(148,163,184,.25);
+  }
+  .tabs input:checked + label{
+    background: rgba(59,130,246,.15);
+    border-color: rgba(59,130,246,.35);
+    color:#dbeafe;
+  }
+  .tab-content{ margin-top:12px; display:none; }
+  #t1:checked ~ .c1, #t2:checked ~ .c2, #t3:checked ~ .c3 { display:block; }
+
+  /* ---------- Toggle Switch ---------- */
+  .switch{ display:inline-flex; align-items:center; gap:10px; }
+  .switch input{ display:none; }
+  .track{
+    width: 56px; height: 32px; border-radius: 999px; position:relative;
+    background: rgba(148,163,184,.35); transition: background var(--trans);
+  }
+  .thumb{
+    position:absolute; top:4px; left:4px; width:24px; height:24px; border-radius:50%;
+    background:#fff; box-shadow: 0 2px 10px rgba(0,0,0,.35); transition: left var(--trans);
+  }
+  .switch input:checked + .track{ background: rgba(34,197,94,.6); }
+  .switch input:checked + .track .thumb{ left: 28px; }
+
+  /* ---------- Focus ring for accessibility ---------- */
+  .btn:focus-visible, a:focus-visible, summary:focus-visible, .tab-label:focus-visible{
+    box-shadow: var(--ring);
+  }
+
+  /* ---------- Simple nav underline on hover ---------- */
+  nav{ display:flex; gap:18px; margin-top:10px; }
+  nav a{
+    position:relative; text-decoration:none; color:#e5e7eb;
+  }
+  nav a::after{
+    content:""; position:absolute; left:0; bottom:-3px; height:2px; width:0;
+    background: linear-gradient(90deg, var(--brand-2), var(--accent));
+    transition: width var(--trans);
+  }
+  nav a:hover::after{ width:100%; }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Interactive CSS (No JS)</h1>
+    <p class="muted">Hover, focus, active &amp; checked states with pure CSS.</p>
+
+    <nav>
+      <a href="#buttons">Buttons</a>
+      <a href="#cards">Cards</a>
+      <a href="#tips">Tooltips</a>
+      <a href="#accordion">Accordion</a>
+      <a href="#tabs">Tabs</a>
+      <a href="#toggle">Toggle</a>
+    </nav>
+
+    <h2 id="buttons">Buttons</h2>
+    <p>
+      <button class="btn">Primary Action</button>
+      <button class="btn btn--ghost">Ghost Button</button>
+    </p>
+
+    <h2 id="cards">Hover Cards</h2>
+    <div class="grid">
+      <article class="card">
+        <img src="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&w=1200&auto=format&fit=crop" alt="">
+        <div class="content">
+          <span class="chip">New</span>
+          <h3>Floating Card</h3>
+          <p class="muted">Lifts and brightens on hover.</p>
+        </div>
+      </article>
+      <article class="card">
+        <img src="https://images.unsplash.com/photo-1491553895911-0055eca6402d?q=80&w=1200&auto=format&fit=crop" alt="">
+        <div class="content">
+          <span class="chip" style="background:rgba(245,158,11,.18);color:#fde68a;border-color:rgba(245,158,11,.35)">Hot</span>
+          <h3>Subtle Glow</h3>
+          <p class="muted">Border + shadow transitions.</p>
+        </div>
+      </article>
+      <article class="card">
+        <img src="https://images.unsplash.com/photo-1509043759401-136742328bb3?q=80&w=1200&auto=format&fit=crop" alt="">
+        <div class="content">
+          <span class="chip" style="background:rgba(59,130,246,.18);color:#bfdbfe;border-color:rgba(59,130,246,.35)">Info</span>
+          <h3>Image Focus</h3>
+          <p class="muted">Clean, responsive layout.</p>
+        </div>
+      </article>
+    </div>
+
+    <h2 id="tips">Tooltip</h2>
+    <p class="muted">
+      Hover this <span class="tooltip" tabindex="0" data-tip="Pure CSS tooltip with ::after">word</span> to see a tooltip.
+    </p>
+
+    <h2 id="accordion">Accordion</h2>
+    <details>
+      <summary>What is this?</summary>
+      <p>Accessible accordion using native <code>&lt;details&gt;</code> and <code>&lt;summary&gt;</code>.</p>
+    </details>
+    <details>
+      <summary>Does it need JS?</summary>
+      <p>Nope. Styling is handled via attribute/state selectors.</p>
+    </details>
+
+    <h2 id="tabs">Tabs (radio + CSS)</h2>
+    <div class="tabs">
+      <input type="radio" name="tab" id="t1" checked>
+      <label class="tab-label" for="t1">Overview</label>
+      <input type="radio" name="tab" id="t2">
+      <label class="tab-label" for="t2">Specs</label>
+      <input type="radio" name="tab" id="t3">
+      <label class="tab-label" for="t3">Reviews</label>
+
+      <div class="tab-content c1">
+        <p class="muted">This section shows by default.</p>
+      </div>
+      <div class="tab-content c2">
+        <p class="muted">Rendered when <strong>Specs</strong> tab is checked.</p>
+      </div>
+      <div class="tab-content c3">
+        <p class="muted">Pure CSS tab switching 🎉</p>
+      </div>
+    </div>
+
+    <h2 id="toggle">Toggle Switch (:checked)</h2>
+    <label class="switch">
+      <input type="checkbox" id="darkDemo" />
+      <span class="track"><span class="thumb"></span></span>
+      <span>Enable option</span>
+    </label>
+  </div>
+</body>
+</html>
